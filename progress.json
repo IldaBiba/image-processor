@@ -1,0 +1,46 @@
+{
+  "tasks": [
+    {
+      "taskId": "1732891350779",
+      "status": "completed",
+      "total": 3,
+      "completed": 3,
+      "failed": 0,
+      "results": {
+        "0": {
+          "success": false,
+          "error": "Request failed with status code 504"
+        }
+      },
+      "averageTime": "11034.33 ms"
+    },
+    {
+      "taskId": "1732893984225",
+      "status": "completed",
+      "total": 3,
+      "completed": 3,
+      "failed": 0,
+      "results": {
+        "2": {
+          "success": false,
+          "error": "Request failed with status code 502"
+        }
+      },
+      "averageTime": "19873.67 ms"
+    },
+    {
+      "taskId": "1732894035063",
+      "status": "completed",
+      "total": 3,
+      "completed": 3,
+      "failed": 0,
+      "results": {
+        "0": {
+          "success": false,
+          "error": "Failed to fetch image from https://via.placeholder.com/150"
+        }
+      },
+      "averageTime": "0.00 ms"
+    }
+  ]
+}
