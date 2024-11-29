@@ -166,20 +166,24 @@ app.post("/process-images", (req, res) => {
     const completed = results.filter((r) => r.status === "fulfilled").length;
     const failed = results.length - completed;
 
-    // Calculate average processing time for successful tasks only
+    // Filter successful results and calculate total time for successful tasks
     const successfulResults = results.filter((r) => r.status === "fulfilled");
+
     const totalTime = successfulResults.reduce(
       (sum, r) => sum + (r.value.timeTaken || 0),
       0
     );
-    const avgTime = completed > 0 ? totalTime / completed : 0; // Avoid divide by 0 if no successful tasks
+
+    // Calculate average time for successful tasks only
+    const avgTime =
+      successfulResults.length > 0 ? totalTime / successfulResults.length : 0;
 
     // Update task status with summary
     updateTask(taskId, {
       status: "completed",
       completed,
       failed,
-      averageTime: `${avgTime.toFixed(2)} ms`,
+      averageTime: `${avgTime.toFixed(2)} ms`, // Format to two decimal places
     });
 
     // Send back summary response
