@@ -76,6 +76,9 @@ function processQueue() {
         failed:
           (loadProgress().tasks.find((t) => t.taskId === taskId)?.failed || 0) +
           1,
+        oncompleted:
+          (loadProgress().tasks.find((t) => t.taskId === taskId)?.oncompleted ||
+            0) + 1,
       });
     } else {
       updateTask(taskId, {
@@ -101,6 +104,9 @@ function processQueue() {
       failed:
         (loadProgress().tasks.find((t) => t.taskId === taskId)?.failed || 0) +
         1,
+      oncompleted:
+        (loadProgress().tasks.find((t) => t.taskId === taskId)?.oncompleted ||
+          0) + 1,
     });
 
     reject(err);
@@ -155,6 +161,7 @@ app.post("/process-images", (req, res) => {
     total: imageUrls.length,
     completed: 0,
     failed: 0,
+    oncompleted: imageUrls.length, // Initially, all are in the queue
     results: {},
   });
 
@@ -183,6 +190,7 @@ app.post("/process-images", (req, res) => {
       status: "completed",
       completed,
       failed,
+      oncompleted: 0, // All tasks are now completed
       averageTime: `${avgTime.toFixed(2)} ms`, // Format to two decimal places
     });
 
@@ -193,6 +201,7 @@ app.post("/process-images", (req, res) => {
         total: imageUrls.length,
         completed,
         failed,
+        oncompleted: 0, // No tasks left to be processed
         averageTime: `${avgTime.toFixed(2)} ms`,
       },
     });

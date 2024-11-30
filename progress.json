@@ -1,34 +1,20 @@
 {
   "tasks": [
     {
-      "taskId": "1732896172713",
+      "taskId": "1732898811918",
       "status": "completed",
-      "total": 1,
-      "completed": 1,
+      "total": 3,
+      "completed": 3,
       "failed": 0,
+      "oncompleted": 0,
       "results": {
-        "0": {
+        "1": {
           "success": true,
-          "filePath": "C:\\Users\\User\\image_processor\\output\\image_0.png",
-          "timeTaken": 1217
+          "filePath": "C:\\Users\\User\\image_processor\\output\\image_1.png",
+          "timeTaken": 13329
         }
       },
-      "averageTime": "497.00 ms"
-    },
-    {
-      "taskId": "1732896716172",
-      "status": "completed",
-      "total": 1,
-      "completed": 1,
-      "failed": 0,
-      "results": {
-        "0": {
-          "success": true,
-          "filePath": "C:\\Users\\User\\image_processor\\output\\image_0.png",
-          "timeTaken": 1365
-        }
-      },
-      "averageTime": "689.00 ms"
+      "averageTime": "1313.00 ms"
     }
   ]
 }
