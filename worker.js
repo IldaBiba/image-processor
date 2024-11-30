@@ -3,37 +3,29 @@ const sharp = require("sharp");
 const axios = require("axios");
 const path = require("path");
 
-// Function to process an image (download, resize, grayscale, save)
 async function processImage(url, index, outputDir) {
-  const startTime = Date.now(); // Start time to calculate processing time
+  const startTime = Date.now();
   try {
-    // Download the image using axios
     const response = await axios({
       url,
       method: "GET",
-      responseType: "arraybuffer", // Download image as binary data
-      timeout: 10000, // Optional: Set a timeout for the request (10 seconds)
+      responseType: "arraybuffer",
+      timeout: 10000,
     });
 
-    const buffer = Buffer.from(response.data); // Convert binary data to a buffer
-    const outputPath = path.join(outputDir, `image_${index}.png`); // Set the output path
+    const buffer = Buffer.from(response.data);
+    const outputPath = path.join(outputDir, `image_${index}.png`);
 
-    // Process the image: resize and convert to grayscale
-    await sharp(buffer)
-      .resize(200) // Resize to 200px width (maintains aspect ratio)
-      .grayscale() // Convert to grayscale
-      .toFile(outputPath); // Save the processed image
+    await sharp(buffer).resize(200).grayscale().toFile(outputPath);
 
-    // Send success message to main thread
-    const timeTaken = Date.now() - startTime; // Calculate the time taken for processing
+    const timeTaken = Date.now() - startTime;
     parentPort.postMessage({
       success: true,
       filePath: outputPath,
       timeTaken: timeTaken,
     });
   } catch (error) {
-    // Send failure message to main thread
-    const timeTaken = Date.now() - startTime; // Calculate time even if failed
+    const timeTaken = Date.now() - startTime;
     parentPort.postMessage({
       success: false,
       error: error.message,
@@ -42,5 +34,4 @@ async function processImage(url, index, outputDir) {
   }
 }
 
-// Start processing the image
 processImage(workerData.url, workerData.index, workerData.outputDir);

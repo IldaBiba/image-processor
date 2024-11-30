@@ -7,17 +7,14 @@ const fs = require("fs");
 const app = express();
 app.use(express.json());
 
-// Configuration
-const maxWorkers = 5; // Max concurrent tasks
+const maxWorkers = 5;
 const outputDir = path.join(__dirname, "output");
 const progressFile = path.join(__dirname, "progress.json");
 
-// Ensure output directory and progress file exist
 if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
 if (!fs.existsSync(progressFile))
   fs.writeFileSync(progressFile, JSON.stringify({ tasks: [] }, null, 2));
 
-// Helper Functions
 function loadProgress() {
   return JSON.parse(fs.readFileSync(progressFile, "utf-8"));
 }
@@ -39,7 +36,6 @@ function updateTask(taskId, updates) {
   saveProgress(progress);
 }
 
-// Validate URL format
 function isValidUrl(url) {
   try {
     new URL(url);
@@ -49,7 +45,6 @@ function isValidUrl(url) {
   }
 }
 
-// Queue System
 const queue = [];
 let activeWorkers = 0;
 
@@ -129,24 +124,19 @@ function addToQueue(url, taskId, index) {
   });
 }
 
-// API Endpoints
-
-// Rate Limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per window
+  windowMs: 15 * 60 * 1000,
+  max: 100,
 });
 
 app.use(limiter);
 
-// POST /process-images: Add tasks to the queue
 app.post("/process-images", (req, res) => {
   const imageUrls = req.body.urls;
   if (!Array.isArray(imageUrls)) {
     return res.status(400).send({ error: "Provide an array of URLs." });
   }
 
-  // Validate URLs before adding to the queue
   const invalidUrls = imageUrls.filter((url) => !isValidUrl(url));
   if (invalidUrls.length > 0) {
     return res.status(400).send({
@@ -161,7 +151,7 @@ app.post("/process-images", (req, res) => {
     total: imageUrls.length,
     completed: 0,
     failed: 0,
-    oncompleted: imageUrls.length, // Initially, all are in the queue
+    oncompleted: imageUrls.length,
     results: {},
   });
 
@@ -173,7 +163,6 @@ app.post("/process-images", (req, res) => {
     const completed = results.filter((r) => r.status === "fulfilled").length;
     const failed = results.length - completed;
 
-    // Filter successful results and calculate total time for successful tasks
     const successfulResults = results.filter((r) => r.status === "fulfilled");
 
     const totalTime = successfulResults.reduce(
@@ -181,34 +170,30 @@ app.post("/process-images", (req, res) => {
       0
     );
 
-    // Calculate average time for successful tasks only
     const avgTime =
       successfulResults.length > 0 ? totalTime / successfulResults.length : 0;
 
-    // Update task status with summary
     updateTask(taskId, {
       status: "completed",
       completed,
       failed,
-      oncompleted: 0, // All tasks are now completed
-      averageTime: `${avgTime.toFixed(2)} ms`, // Format to two decimal places
+      oncompleted: 0,
+      averageTime: `${avgTime.toFixed(2)} ms`,
     });
 
-    // Send back summary response
     res.send({
       taskId,
       summary: {
         total: imageUrls.length,
         completed,
         failed,
-        oncompleted: 0, // No tasks left to be processed
+        oncompleted: 0,
         averageTime: `${avgTime.toFixed(2)} ms`,
       },
     });
   });
 });
 
-// GET /status: Get task progress
 app.get("/status/:taskId", (req, res) => {
   const taskId = req.params.taskId;
   const progress = loadProgress();
@@ -221,7 +206,6 @@ app.get("/status/:taskId", (req, res) => {
   res.send(task);
 });
 
-// Start the server
 const PORT = 3000;
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
